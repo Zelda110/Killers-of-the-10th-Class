@@ -7,6 +7,8 @@
 
 #include "game.hpp"
 
+bool game_stopped=false;
+
 Game* MAINGAME=nullptr;
 
 General L_Hospital("甄姬",&generals::L_Hospital,3);
@@ -108,7 +110,8 @@ void Game::start(){
     cout<<"Game started."<<endl;
     starting_finished=true;
     
-    while (!WindowShouldClose()) {
+    //游戏主循环
+    while (!game_stopped) {
         switch (current_stage) {
             case 0://准备阶段
                 pass();

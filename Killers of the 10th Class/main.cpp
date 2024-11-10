@@ -295,6 +295,7 @@ int main(){
         
         EndDrawing();
     }
+    game_stopped=true;
     CloseWindow();
     game_logic.join();
 }

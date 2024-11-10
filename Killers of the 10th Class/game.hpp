@@ -18,6 +18,8 @@
 #include "images.hpp"
 using namespace std;
 
+extern bool game_stopped;//游戏是否结束
+
 //关于游戏基本逻辑的变量、函数和类
 
 class Game;

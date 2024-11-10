@@ -4,6 +4,15 @@ Duoyusha won't disappear!
 
 The first version is still been developing. Wait please.
 
+current plan:
+
+game logic making;
+adding generals;
+
+bug fixing:
+
+sometimes crash when quitting game;
+
 developing group: yyl
 
 designing group: lyz yyl lqe
