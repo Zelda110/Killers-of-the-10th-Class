@@ -22,6 +22,7 @@ Texture defaulted;
 namespace cards {
 Texture back;
 Texture slash;
+Texture peach;
 Texture suit0;
 Texture suit1;
 Texture suit2;
@@ -40,10 +41,11 @@ void load_a_texture(const char* path,Texture* target){
 }
 
 void LoadTextures() {
-    load_a_texture("resource/Generals_back.png", &generals::back);
+    load_a_texture("resource/generals/Generals_back.png", &generals::back);
     load_a_texture("resource/default_player.png", &players::defaulted);
-    load_a_texture("resource/card_back.png", &cards::back);
-    load_a_texture("resource/slash.png", &cards::slash);
+    load_a_texture("resource/cards/card_back.png", &cards::back);
+    load_a_texture("resource/cards/slash.png", &cards::slash);
+    load_a_texture("resource/cards/peach.png", &cards::peach);
     load_a_texture("resource/suit0.png", &cards::suit0);
     load_a_texture("resource/suit1.png", &cards::suit1);
     load_a_texture("resource/suit2.png", &cards::suit2);

@@ -21,6 +21,7 @@ using namespace std;
 //关于游戏基本逻辑的变量、函数和类
 
 class Game;
+extern Game* MAINGAME;
 
 class Card{
 public:
@@ -39,16 +40,17 @@ private:
 
 class Skill{//技能类
 public:
-    Skill();
+    Skill(string name,int type,void (*use)(Game*,Skill*)):name(name),type(type),use(use){};
     string name;
-    int type;//类型 -1特殊 0卡牌技 1武将技能 2装备技能
-    vector<any> targets;//目标
-    void choose_target();//选择目标
+    int type;//类型 -1特殊 0基本牌技 1锦囊牌技 2装备牌技 3武将技能
+    int using_player;//使用的玩家(玩家号)
+    void (*use)(Game*,Skill*);//使用准备、选择目标等
     bool enabled;//是否生效
-    void ask_for_react();//获取其他玩家的回应
     int used_time=0;//使用次数
     vector<Card> based_card;//基于的卡牌
-    void* execute(Game* maingame);//执行
+    vector<int> targets;//目标(玩家号)
+    vector<int> args;//参数
+    void perform(int using_player,vector<int> targets,vector<int> args);//使用技能
 };
 
 class General{
@@ -98,7 +100,7 @@ public:
     vector<int> begining_players;//开始时玩家
     int this_player;//本机扮演的玩家
     int current_stage;//当前阶段 0准备 1判定 2摸牌 3出牌 4弃牌 5结束
-    int current_player;//当前玩家
+    int current_player;//当前玩家(在playing_players中下标)
     vector<Card> card_deck;//牌堆
     vector<Card> used_deck;//废牌堆
     void execute_code(string name,vector<int> args);//执行指令
@@ -109,5 +111,18 @@ public:
 void give_card(vector<Card>* from,vector<Card>* end,int from_index=0,int end_index=-1);
 
 void hurt(Game* maingame,int player_index,int number);
+
+namespace skills_exes {
+
+//基本牌
+//杀
+void slash(Game* maingame,Skill* skill);//arg格式:{伤害数,响应能力(可/否)0/1,属性(普通/火焰/雷电)0/1/2}
+
+//桃
+void peach(Game* maingame,Skill* skill);//arg格式:{}
+
+}
+
+extern vector<Skill> basic_card_skills;//所有基本牌技能
 
 #endif /* game_hpp */

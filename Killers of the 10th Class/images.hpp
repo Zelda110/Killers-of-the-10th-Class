@@ -27,6 +27,7 @@ extern Texture defaulted;
 namespace cards {
 extern Texture back;
 extern Texture slash;
+extern Texture peach;
 extern Texture suit0;
 extern Texture suit1;
 extern Texture suit2;
@@ -39,6 +40,5 @@ extern Texture lord_icon;
 }
 
 void LoadTextures();
-void UnloadTextures();
 
 #endif /* images_hpp */

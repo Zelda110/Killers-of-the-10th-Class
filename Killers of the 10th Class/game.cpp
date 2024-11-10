@@ -7,12 +7,18 @@
 
 #include "game.hpp"
 
+Game* MAINGAME=nullptr;
+
 General L_Hospital("甄姬",&generals::L_Hospital,3);
 General wcy("王成悦",&generals::wcy,3);
 General lcy("刘宸驿",&generals::lcy,4);
 
 string Card::get_info(){
     return to_string(suit)+" "+to_string(number)+" "+name+" "+to_string(type);
+}
+
+void Skill::perform(int using_player,vector<int> targets,vector<int> args){
+    use(MAINGAME, this);
 }
 
 void Game::check_cards(int type){
@@ -32,6 +38,11 @@ void Game::generate_cards(){
     for (int suit=0; suit<=3; suit++) {
         for (int num=1; num<=13; num++) {
             card_deck.push_back(Card(suit,num,"杀",0,"","",&cards::slash));
+        }
+    }
+    for (int suit=0; suit<=3; suit++) {
+        for (int num=1; num<=13; num++) {
+            card_deck.push_back(Card(suit,num,"桃",0,"","",&cards::peach));
         }
     }
     cout<<"Card deck generated."<<endl;
@@ -98,8 +109,32 @@ void Game::start(){
     starting_finished=true;
     
     while (!WindowShouldClose()) {
-        pass();
-        WaitTime(0.01);
+        switch (current_stage) {
+            case 0://准备阶段
+                pass();
+                break;
+            case 1://判定阶段
+                pass();
+                break;
+            case 2://摸牌阶段
+                for (int m=0; m<2; m++) {
+                    give_card(&card_deck, &players[playing_players[current_player]].cards);
+                }
+                pass();
+                break;
+            case 3://出牌阶段
+                pass();
+                break;
+            case 4://弃牌阶段
+                pass();
+                break;
+            case 5://结束阶段
+                pass();
+                break;
+            default:
+                break;
+        }
+        WaitTime(0.1);
     }
 }
 
@@ -117,3 +152,19 @@ void give_card(vector<Card>* from,vector<Card>* end,int from_index,int end_index
 void hurt(Game* maingame,int player_index,int number){
     maingame->players[player_index].health-=number;
 }
+
+namespace skills_exes {
+
+void slash(Game* maingame,Skill* skill){
+    ;
+}
+
+void peach(Game* maingame,Skill* skill){
+    maingame->players[skill->targets[0]].health++;
+}
+
+}
+
+vector<Skill> basic_card_skills={
+    Skill("桃",0,skills_exes::peach),
+};

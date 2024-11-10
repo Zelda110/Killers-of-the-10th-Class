@@ -193,7 +193,7 @@ void ingame_display(Game* main_game){
         DrawText(to_string(now_player->cards.size()).c_str(),base_x+20
                  *scale,base_y+30*scale,
                  60*scale,
-                 BLACK);
+                 WHITE);
         //主公标记
         if (m==0) {
             DrawTextureEx(uis::lord_icon,
@@ -263,6 +263,7 @@ int main(){
     LoadTextures();
     
     Game maingame(5);
+    MAINGAME=&maingame;
     thread game_logic(bind(&Game::start, &maingame));
     
     while (!maingame.starting_finished) {
@@ -272,6 +273,8 @@ int main(){
     while (!WindowShouldClose()) {
         BeginDrawing();
         //键盘轮询
+        
+        //更改观察对象(调试用)
         if (IsKeyPressed(KEY_ZERO)) {
             maingame.this_player=0;
         }
