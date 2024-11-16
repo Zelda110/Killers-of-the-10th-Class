@@ -36,23 +36,26 @@ public:
     int suit;//花色 -1特殊 0红桃 1黑桃 2梅花 3方块
     int type;//牌型 -1特殊 0普通 1锦囊 2装备 3武器 4宝物 5马+ 6马-
     string get_info();
-private:
-    ;
 };
 
 class Skill{//技能类
 public:
-    Skill(string name,int type,void (*use)(Game*,Skill*)):name(name),type(type),use(use){};
+    Skill(string name,int type,int situation,void (*use)(Game*,Skill*)):name(name),type(type),situation(situation),use(use){
+    };
     string name;
     int type;//类型 -1特殊 0基本牌技 1锦囊牌技 2装备牌技 3武将技能
+    int situation;//使用场景 0准备阶段 1判定阶段 2摸牌阶段 3出牌阶段 4弃牌阶段 5结束阶段 6响应阶段 7其他
     int using_player;//使用的玩家(玩家号)
-    void (*use)(Game*,Skill*);//使用准备、选择目标等
-    bool enabled;//是否生效
+    void (*use)(Game*,Skill*);//技能实现
+    bool (*judge)(Game*,int);//判断能否使用
+    vector<vector<int>> (*client)();//客户端指令 用于选择目标等 返回{targets}
     int used_time=0;//使用次数
     vector<Card> based_card;//基于的卡牌
-    vector<int> targets;//目标(玩家号)
+    vector<int> target_players;//目标(玩家号)
+    vector<int> target_cards;//目标(卡牌) {玩家号 位置号 下标}
+    vector<int> target_positions;//目标(位置) {玩家号 位置号} 位置号 0手牌 1判定区 2武器 3防具 4宝物 5马+ 6马-
     vector<int> args;//参数
-    void perform(int using_player,vector<int> targets,vector<int> args);//使用技能
+    void perform(int using_player,vector<int> target_players,vector<int> target_cards,vector<int> target_positions,vector<int> args);//使用技能
 };
 
 class General{
@@ -63,11 +66,13 @@ public:
     Texture* card;//武将牌纹理
     vector<Skill> skills;//技能列表
     int max_health;//体力上限
+    vector<int> subject;//学科 0神 1数学 2物理 3化学 4生物 5信息 6英语
 };
 
 //所有武将
 extern General L_Hospital;
 extern General wcy;
+extern General lcy;
 
 class Player{
 public:
@@ -85,6 +90,7 @@ public:
     int health;//体力
     int max_health;//体力上限
     int team;//阵营 0老常 1班委 2学生 3班长
+    vector<Skill> skills;//技能
 };
 
 class Game{//一局游戏的类
@@ -119,9 +125,16 @@ namespace skills_exes {
 //基本牌
 //杀
 void slash(Game* maingame,Skill* skill);//arg格式:{伤害数,响应能力(可/否)0/1,属性(普通/火焰/雷电)0/1/2}
-
 //桃
 void peach(Game* maingame,Skill* skill);//arg格式:{}
+
+}
+
+namespace skills_clients {
+
+//基本牌
+//桃
+void peach();
 
 }
 
