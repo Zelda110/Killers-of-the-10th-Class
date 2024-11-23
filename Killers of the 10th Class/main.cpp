@@ -204,7 +204,7 @@ void ingame_display(Game* main_game){
     }
     
     //渲染自己的界面
-    Player* self_player=&main_game->players[main_game->this_player];
+    Player* self_player=&main_game->players[main_game->this_player];//自己玩家
     //武将牌
     DrawTextureEx(*self_player->general.card,
                   Vector2(width-200*scale,height-240*scale),
@@ -242,12 +242,26 @@ void ingame_display(Game* main_game){
     //手牌
     double base_x=width/2-(88*main_game->players[main_game->this_player].cards.size()-4)*scale;
     for (int i=0; i<main_game->players[main_game->this_player].cards.size(); i++) {
-//        DrawTextureEx(*main_game->players[main_game->this_player].cards[i].texture,
-//                      Vector2(base_x+220*i*scale,height-300*scale),
-//                      0,
-//                      0.5*scale,
-//                      WHITE);
         draw_card(base_x+(176*i+84)*scale, height-125.6*scale, 0.4, false,&main_game->players[main_game->this_player].cards[i]);
+    }
+    
+    //处理技能相关
+    //寻找所有可用技能
+    vector<Skill*> usable_skills;
+    for (int i=0; i<self_player->skills.size(); i++) {
+        if (self_player->skills[i].judge(main_game,main_game->this_player)) {
+            usable_skills.push_back(&self_player->skills[i]);
+        }
+    }
+    //渲染技能名字
+    int skill_number=usable_skills.size();
+    for (int i=0; i<skill_number; i++) {
+        base_x=width/2-(skill_number-1)*50*scale+50*scale*i;
+        DrawText(usable_skills[i]->name.c_str(),
+                 base_x-MeasureText(usable_skills[i]->name.c_str(), 24*scale),
+                 height-250*scale-24*scale,
+                 24*scale,
+                 BLACK);
     }
 }
 
@@ -261,6 +275,8 @@ int main(){
     window_change_size();
     
     LoadTextures();
+    
+    
     
     Game maingame(5);
     MAINGAME=&maingame;

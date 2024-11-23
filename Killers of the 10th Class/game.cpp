@@ -11,9 +11,10 @@ bool game_stopped=false;
 
 Game* MAINGAME=nullptr;
 
-General L_Hospital("甄姬",&generals::L_Hospital,3);
 General wcy("王成悦",&generals::wcy,3);
-General lcy("刘宸驿",&generals::lcy,4);
+General lcy("刘宸驿",&generals::lcy,5);
+General lcy("Miss.Trunchbull",&generals::Trunchbull,32);
+General lcy("Matilda",&generals::Matilda,2);
 
 string Card::get_info(){
     return to_string(suit)+" "+to_string(number)+" "+name+" "+to_string(type);
@@ -93,18 +94,46 @@ void hurt(Game* maingame,int player_index,int number){
 
 namespace skills_exes {
 
+void pass(Game* maingame,Skill* skill){
+    maingame->pass();
+}
+
 void slash(Game* maingame,Skill* skill){
     ;
 }
 
 void peach(Game* maingame,Skill* skill){
-    maingame->players[skill->targets[0]].health++;
+    maingame->players[skill->target_players[0]].health+=skill->args[0];
 }
 
 }
+
+namespace skills_clients {
+
+vector<vector<int>> pass(Game* maingame,int using_player){
+    return {{},{},{},{}};
+}
+
+vector<vector<int>> peach(Game* maingame,int using_player){
+    return {{using_player},{},{},{1}};
+}
+
+}
+
+namespace skills_judges {
+
+bool pass(Game* maingame,int using_player){
+    return true;
+}
+
+}
+
+vector<Skill> game_logic_skills={
+    Skill("跳过", -1, 0, skills_exes::pass, skills_judges::pass, skills_clients::pass)
+};
 
 vector<Skill> basic_card_skills={
-    Skill("桃",0,3,skills_exes::peach),
+//    Skill("桃",0,0,skills_exes::peach),
 };
 
 void Game::start(){
@@ -145,6 +174,11 @@ void Game::start(){
     
     //初始化玩家技能
     for (int i=0; i<players.size(); i++) {
+        //发放游戏逻辑技能
+        for (int j=0; j<game_logic_skills.size(); j++) {
+            players[i].skills.push_back(game_logic_skills[j]);
+        }
+        //发放基本牌技能
         for (int j=0; j<basic_card_skills.size(); j++) {
             players[i].skills.push_back(basic_card_skills[j]);
         }
@@ -158,28 +192,19 @@ void Game::start(){
         Player* current_player_ptr=&players[playing_players[current_player]];
         switch (current_stage) {
             case 0://准备阶段
-                pass();
                 break;
             case 1://判定阶段
-                pass();
                 break;
             case 2://摸牌阶段
                 for (int m=0; m<2; m++) {
                     give_card(&card_deck, &players[playing_players[current_player]].cards);
                 }
-                for (int i=0; i<current_player_ptr->skills.size(); i++) {
-                    current_player_ptr->skills[i].perform(playing_players[current_player], {playing_players[current_player]}, {});
-                }
-                pass();
                 break;
             case 3://出牌阶段
-                pass();
                 break;
             case 4://弃牌阶段
-                pass();
                 break;
             case 5://结束阶段
-                pass();
                 break;
             default:
                 break;

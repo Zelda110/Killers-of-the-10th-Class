@@ -10,9 +10,10 @@
 // 定义纹理
 namespace generals {
 Texture back;
-Texture L_Hospital;
 Texture wcy;
 Texture lcy;
+Texture Trunchbull;
+Texture Matilda;
 }
 
 namespace players {
@@ -50,9 +51,11 @@ void LoadTextures() {
     load_a_texture("resource/suit1.png", &cards::suit1);
     load_a_texture("resource/suit2.png", &cards::suit2);
     load_a_texture("resource/suit3.png", &cards::suit3);
-    load_a_texture("resource/L'Hospital.png", &generals::L_Hospital);
     load_a_texture("resource/generals/wcy.png", &generals::wcy);
     load_a_texture("resource/generals/lcy.png", &generals::lcy);
+    load_a_texture("resource/generals/Miss.Trunchbull.png",
+                   &generals::Trunchbull);
+    load_a_texture("resource/generals/Matilda.png", &generals::Matilda);
     load_a_texture("resource/target.png", &uis::target_icon);
     load_a_texture("resource/lord.png", &uis::lord_icon);
 }

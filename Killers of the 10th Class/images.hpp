@@ -15,9 +15,10 @@ using namespace std;
 
 namespace generals {
 extern Texture back;
-extern Texture L_Hospital;
 extern Texture wcy;
 extern Texture lcy;
+extern Texture Trunchbull;
+extern Texture Matilda;
 }
 
 namespace players {
@@ -38,6 +39,8 @@ namespace uis {
 extern Texture target_icon;
 extern Texture lord_icon;
 }
+
+
 
 void LoadTextures();
 

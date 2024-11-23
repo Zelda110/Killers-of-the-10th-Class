@@ -40,15 +40,15 @@ public:
 
 class Skill{//技能类
 public:
-    Skill(string name,int type,int situation,void (*use)(Game*,Skill*)):name(name),type(type),situation(situation),use(use){
+    Skill(string name,int type,int situation,void (*use)(Game*,Skill*),bool (*judge)(Game*,int),vector<vector<int>> (*client)(Game*,int)):name(name),type(type),situation(situation),use(use),judge(judge),client(client){
     };
     string name;
     int type;//类型 -1特殊 0基本牌技 1锦囊牌技 2装备牌技 3武将技能
-    int situation;//使用场景 0准备阶段 1判定阶段 2摸牌阶段 3出牌阶段 4弃牌阶段 5结束阶段 6响应阶段 7其他
+    int situation;//使用场景 0自己回合 1他人回合 2响应阶段 3其他
     int using_player;//使用的玩家(玩家号)
     void (*use)(Game*,Skill*);//技能实现
     bool (*judge)(Game*,int);//判断能否使用
-    vector<vector<int>> (*client)();//客户端指令 用于选择目标等 返回{targets}
+    vector<vector<int>> (*client)(Game*,int);//客户端指令 用于选择目标等 返回{target_players target_cards target_positions args}
     int used_time=0;//使用次数
     vector<Card> based_card;//基于的卡牌
     vector<int> target_players;//目标(玩家号)
@@ -70,9 +70,10 @@ public:
 };
 
 //所有武将
-extern General L_Hospital;
 extern General wcy;
 extern General lcy;
+extern General Trunchbull;
+extern General Matilda;
 
 class Player{
 public:
@@ -122,22 +123,39 @@ void hurt(Game* maingame,int player_index,int number);
 
 namespace skills_exes {
 
+//游戏逻辑
+//跳过此阶段
+void pass(Game* maingame,Skill* skill);//arg格式:{}
+
 //基本牌
 //杀
 void slash(Game* maingame,Skill* skill);//arg格式:{伤害数,响应能力(可/否)0/1,属性(普通/火焰/雷电)0/1/2}
 //桃
-void peach(Game* maingame,Skill* skill);//arg格式:{}
+void peach(Game* maingame,Skill* skill);//arg格式:{回复量}
 
 }
 
 namespace skills_clients {
 
+//游戏逻辑
+//跳过此阶段
+vector<vector<int>> pass(Game* maingame,int using_player);
+
 //基本牌
 //桃
-void peach();
+vector<vector<int>> peach(Game* maingame,int using_player);
 
 }
 
+namespace skills_judges {
+
+//游戏逻辑
+//跳过此阶段
+bool pass(Game* maingame,int using_player);
+
+}
+
+extern vector<Skill> game_logic_skills;//所有游戏逻辑技能
 extern vector<Skill> basic_card_skills;//所有基本牌技能
 
 #endif /* game_hpp */
