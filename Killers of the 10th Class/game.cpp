@@ -13,8 +13,8 @@ Game* MAINGAME=nullptr;
 
 General wcy("王成悦",&generals::wcy,3);
 General lcy("刘宸驿",&generals::lcy,5);
-General lcy("Miss.Trunchbull",&generals::Trunchbull,32);
-General lcy("Matilda",&generals::Matilda,2);
+General Trunchbull("Miss.Trunchbull",&generals::Trunchbull,32);
+General Matilda("Matilda",&generals::Matilda,2);
 
 string Card::get_info(){
     return to_string(suit)+" "+to_string(number)+" "+name+" "+to_string(type);
@@ -143,7 +143,7 @@ void Game::start(){
     generate_cards();//生成牌堆
     //初始化玩家
     for (int i=0; i<player_number; i++) {
-        players.push_back(Player("player"+to_string(i),wcy));
+        players.push_back(Player("player"+to_string(i),Matilda));
         playing_players.push_back(i);
     }
     srand(random_seed);
