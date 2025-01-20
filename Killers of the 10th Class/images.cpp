@@ -24,10 +24,14 @@ namespace cards {
 Texture back;
 Texture slash;
 Texture peach;
+Texture JDB;
+Texture MasterSword;
 Texture suit0;
 Texture suit1;
 Texture suit2;
 Texture suit3;
+Texture suits[4];
+Color color[4]={RED,BLACK,BLACK,RED};
 }
 
 namespace uis {
@@ -45,12 +49,18 @@ void LoadTextures() {
     load_a_texture("resource/generals/Generals_back.png", &generals::back);
     load_a_texture("resource/default_player.png", &players::defaulted);
     load_a_texture("resource/cards/card_back.png", &cards::back);
-    load_a_texture("resource/cards/slash.png", &cards::slash);
-    load_a_texture("resource/cards/peach.png", &cards::peach);
+//    load_a_texture("resource/cards/slash.png", &cards::slash);
+//    load_a_texture("resource/cards/peach.png", &cards::peach);
+    load_a_texture("resource/cards/JDB.png", &cards::JDB);
+    load_a_texture("resource/cards/MasterSword.png", &cards::MasterSword);
     load_a_texture("resource/suit0.png", &cards::suit0);
     load_a_texture("resource/suit1.png", &cards::suit1);
     load_a_texture("resource/suit2.png", &cards::suit2);
     load_a_texture("resource/suit3.png", &cards::suit3);
+    cards::suits[0]=cards::suit0;
+    cards::suits[1]=cards::suit1;
+    cards::suits[2]=cards::suit2;
+    cards::suits[3]=cards::suit3;
     load_a_texture("resource/generals/wcy.png", &generals::wcy);
     load_a_texture("resource/generals/lcy.png", &generals::lcy);
     load_a_texture("resource/generals/Miss.Trunchbull.png",

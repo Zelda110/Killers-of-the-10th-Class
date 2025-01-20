@@ -29,10 +29,14 @@ namespace cards {
 extern Texture back;
 extern Texture slash;
 extern Texture peach;
+extern Texture JDB;
+extern Texture MasterSword;
 extern Texture suit0;
 extern Texture suit1;
 extern Texture suit2;
 extern Texture suit3;
+extern Texture suits[4];
+extern Color color[4];
 }
 
 namespace uis {

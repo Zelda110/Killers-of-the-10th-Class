@@ -33,6 +33,56 @@ double PLAYERS_ELLIPSE(double x){//玩家排列的椭圆
     }
 }
 
+int *CodepointRemoveDuplicates(int *codepoints, int codepointCount, int *codepointsResultCount)
+{
+    int codepointsNoDupsCount = codepointCount;
+    int *codepointsNoDups = (int *)calloc(codepointCount, sizeof(int));
+    memcpy(codepointsNoDups, codepoints, codepointCount*sizeof(int));
+
+    for (int i = 0; i < codepointsNoDupsCount; i++)
+    {
+        for (int j = i + 1; j < codepointsNoDupsCount; j++)
+        {
+            if (codepointsNoDups[i] == codepointsNoDups[j])
+            {
+                for (int k = j; k < codepointsNoDupsCount; k++) codepointsNoDups[k] = codepointsNoDups[k + 1];
+
+                codepointsNoDupsCount--;
+                j--;
+            }
+        }
+    }
+    *codepointsResultCount = codepointsNoDupsCount;
+    return codepointsNoDups;
+}
+
+//字体路径
+string FontPath="resource/FangZhengZhunYuan.ttf";
+
+//用于绘制中文
+void DrawTextZh(const char *text, int posX, int posY, int fontSize, Color color){
+    int codepointCount = 0;
+    int codepointSize = 0;
+    int *codepoints = LoadCodepoints(text, &codepointCount);
+    int codepointsNoDupsCount = 0;
+    int *codepointsNoDups = CodepointRemoveDuplicates(codepoints, codepointCount, &codepointsNoDupsCount);
+    UnloadCodepoints(codepoints);
+    Font font = LoadFontEx(FontPath.c_str(),
+                           200,
+                           codepointsNoDups,
+                           codepointsNoDupsCount);
+    SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
+    SetTextLineSpacing(0);
+    free(codepointsNoDups);
+    DrawTextEx(font,
+               text,
+               (Vector2) { static_cast<float>(posX), static_cast<float>(posY) },
+               fontSize,
+               0,
+               color);
+}
+
+//改变窗口大小
 void window_change_size(){
     width=GetScreenWidth();
     height=GetScreenHeight();
@@ -52,61 +102,18 @@ void draw_card(double x,double y,double s,bool is_backed,Card* card=NULL){
                       0,
                       scale*s,
                       WHITE);
-        switch (card->suit) {
-            case 0:
-                DrawTextureEx(cards::suit0,
-                              Vector2(x-170*scale*s,y-256*scale*s),
-                              0,
-                              scale*s,
-                              WHITE);
-                DrawText(NUMBERS[card->number].c_str(),
-                         x-155*scale*s,
-                         y-206*scale*s,
-                         50*scale*s,
-                         RED);
-                break;
-                
-            case 1:
-                DrawTextureEx(cards::suit1,
-                              Vector2(x-170*scale*s,y-256*scale*s),
-                              0,
-                              scale*s,
-                              WHITE);
-                DrawText(NUMBERS[card->number].c_str(),
-                         x-155*scale*s,
-                         y-206*scale*s,
-                         50*scale*s,
-                         BLACK);
-                break;
-                
-            case 2:
-                DrawTextureEx(cards::suit2,
-                              Vector2(x-170*scale*s,y-256*scale*s),
-                              0,
-                              scale*s,
-                              WHITE);
-                DrawText(NUMBERS[card->number].c_str(),
-                         x-155*scale*s,
-                         y-206*scale*s,
-                         50*scale*s,
-                         BLACK);
-                break;
-                
-            case 3:
-                DrawTextureEx(cards::suit3,
-                              Vector2(x-170*scale*s,y-256*scale*s),
-                              0,
-                              scale*s,
-                              WHITE);
-                DrawText(NUMBERS[card->number].c_str(),
-                         x-155*scale*s,
-                         y-206*scale*s,
-                         50*scale*s,
-                         RED);
-                break;
-            default:
-                break;
-        }
+        //绘制花色
+        DrawTextureEx(cards::suits[card->suit],
+                      Vector2(x-152*scale*s,y-176*scale*s),
+                      0,
+                      scale*s*1.3,
+                      WHITE);
+        //绘制点数
+        DrawText(NUMBERS[card->number].c_str(),
+                 x-145*scale*s,
+                 y-230*scale*s,
+                 65*scale*s,
+                 cards::color[card->suit]);
     }
 }
 
@@ -242,7 +249,7 @@ void ingame_display(Game* main_game){
     //手牌
     double base_x=width/2-(88*main_game->players[main_game->this_player].cards.size()-4)*scale;
     for (int i=0; i<main_game->players[main_game->this_player].cards.size(); i++) {
-        draw_card(base_x+(176*i+84)*scale, height-125.6*scale, 0.4, false,&main_game->players[main_game->this_player].cards[i]);
+        draw_card(base_x+(176*i+84)*scale, height-175.6*scale, 0.4*572/1028, false,&main_game->players[main_game->this_player].cards[i]);
     }
     
     //处理技能相关
@@ -257,7 +264,7 @@ void ingame_display(Game* main_game){
     int skill_number=usable_skills.size();
     for (int i=0; i<skill_number; i++) {
         base_x=width/2-(skill_number-1)*50*scale+50*scale*i;
-        DrawText(usable_skills[i]->name.c_str(),
+        DrawTextZh(usable_skills[i]->name.c_str(),
                  base_x-MeasureText(usable_skills[i]->name.c_str(), 24*scale),
                  height-250*scale-24*scale,
                  24*scale,
@@ -273,6 +280,7 @@ int main(){
     SetExitKey(0);//不用键盘关闭窗口
     SetWindowState(FLAG_WINDOW_RESIZABLE|FLAG_WINDOW_ALWAYS_RUN);
     window_change_size();
+    
     
     LoadTextures();
     

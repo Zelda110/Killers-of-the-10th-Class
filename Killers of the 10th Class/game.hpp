@@ -27,14 +27,12 @@ extern Game* MAINGAME;
 
 class Card{
 public:
-    Card(int suit,int number,string name,int type,string distribe,string quotation,Texture* texture):suit(suit),number(number),name(name),type(type),distribe(distribe),quotation(quotation),texture(texture){};
+    Card(int suit,int number,string name,int type,string distribe,string quotation,Texture* texture):suit(suit),number(number),name(name),type(type),texture(texture){};
     string name;
-    string distribe;//牌的介绍
-    string quotation;//牌底的名言
     Texture* texture;//牌面纹理
     int number;//点数 0-13
-    int suit;//花色 -1特殊 0红桃 1黑桃 2梅花 3方块
-    int type;//牌型 -1特殊 0普通 1锦囊 2装备 3武器 4宝物 5马+ 6马-
+    int suit;
+    int type;
     string get_info();
 };
 
@@ -66,7 +64,7 @@ public:
     Texture* card;//武将牌纹理
     vector<Skill> skills;//技能列表
     int max_health;//体力上限
-    vector<int> subject;//学科 0神 1数学 2物理 3化学 4生物 5信息 6英语
+    vector<int> subject;
 };
 
 //所有武将
@@ -90,7 +88,7 @@ public:
     vector<Card> horse_minus;//马-
     int health;//体力
     int max_health;//体力上限
-    int team;//阵营 0老常 1班委 2学生 3班长
+    int team;//阵营
     vector<Skill> skills;//技能
 };
 
@@ -114,48 +112,21 @@ public:
     vector<Card> used_deck;//废牌堆
     void execute_code(string name,vector<int> args);//执行指令
     
-    void pass();//跳过当前阶段
+    void pass();//结束当前阶段
 };
 
-void give_card(vector<Card>* from,vector<Card>* end,int from_index=0,int end_index=-1);
+//事件处理函数
+void game_start();//游戏开始
+void round_start();//一轮开始
+void turn_start();//回合开始
+void turn_finish();//回合结束
+void stage_start();//阶段开始
+void stage_finish();//阶段结束
+void stage_skip();//阶段跳过
 
-void hurt(Game* maingame,int player_index,int number);
-
-namespace skills_exes {
-
-//游戏逻辑
-//跳过此阶段
-void pass(Game* maingame,Skill* skill);//arg格式:{}
-
-//基本牌
-//杀
-void slash(Game* maingame,Skill* skill);//arg格式:{伤害数,响应能力(可/否)0/1,属性(普通/火焰/雷电)0/1/2}
-//桃
-void peach(Game* maingame,Skill* skill);//arg格式:{回复量}
-
-}
-
-namespace skills_clients {
-
-//游戏逻辑
-//跳过此阶段
-vector<vector<int>> pass(Game* maingame,int using_player);
-
-//基本牌
-//桃
-vector<vector<int>> peach(Game* maingame,int using_player);
-
-}
-
-namespace skills_judges {
-
-//游戏逻辑
-//跳过此阶段
-bool pass(Game* maingame,int using_player);
-
-}
-
-extern vector<Skill> game_logic_skills;//所有游戏逻辑技能
-extern vector<Skill> basic_card_skills;//所有基本牌技能
+//基础游戏行为
+void health_decrease();//扣减体力
+void health_increase();//体力提升
+void move_card(vector<Card>* from,vector<Card>* end,int from_index=0,int end_index=-1);//移动卡牌
 
 #endif /* game_hpp */

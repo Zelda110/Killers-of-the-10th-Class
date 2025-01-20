@@ -45,39 +45,20 @@ void Game::check_cards(int type){
 void Game::generate_cards(){
     for (int suit=0; suit<=3; suit++) {
         for (int num=1; num<=13; num++) {
-            card_deck.push_back(Card(suit,num,"杀",0,"","",&cards::slash));
+            card_deck
+                .push_back(Card(suit,num,"大师之剑",0,"","",&cards::MasterSword));
         }
     }
     for (int suit=0; suit<=3; suit++) {
         for (int num=1; num<=13; num++) {
-            card_deck.push_back(Card(suit,num,"桃",0,"","",&cards::peach));
+            card_deck.push_back(Card(suit,num,"加多宝",0,"","",&cards::JDB));
         }
     }
     cout<<"Card deck generated."<<endl;
     check_cards(0);
 }
 
-void Game::give_initing_cards(){
-    for (int i=0; i<players.size(); i++) {
-        for (int m=0; m<4; m++) {
-            give_card(&card_deck, &players[i].cards);
-        }
-        cout<<"Initing cards given."<<endl;
-    }
-}
-
-void Game::pass(){
-    current_stage++;
-    if (current_stage>5) {
-        current_stage%=5;
-        current_player++;
-        if (current_player>=playing_players.size()) {
-            current_player%=playing_players.size();
-        }
-    }
-}
-
-void give_card(vector<Card>* from,vector<Card>* end,int from_index,int end_index){
+void move_card(vector<Card>* from,vector<Card>* end,int from_index,int end_index){
     if (from_index<0) {
         from_index+=from->size();
     }
@@ -88,53 +69,14 @@ void give_card(vector<Card>* from,vector<Card>* end,int from_index,int end_index
     from->erase(from->begin()+from_index);
 }
 
-void hurt(Game* maingame,int player_index,int number){
-    maingame->players[player_index].health-=number;
+void Game::give_initing_cards(){
+    for (int i=0; i<players.size(); i++) {
+        for (int m=0; m<4; m++) {
+            move_card(&card_deck, &players[i].cards);
+        }
+        cout<<"Initing cards given."<<endl;
+    }
 }
-
-namespace skills_exes {
-
-void pass(Game* maingame,Skill* skill){
-    maingame->pass();
-}
-
-void slash(Game* maingame,Skill* skill){
-    ;
-}
-
-void peach(Game* maingame,Skill* skill){
-    maingame->players[skill->target_players[0]].health+=skill->args[0];
-}
-
-}
-
-namespace skills_clients {
-
-vector<vector<int>> pass(Game* maingame,int using_player){
-    return {{},{},{},{}};
-}
-
-vector<vector<int>> peach(Game* maingame,int using_player){
-    return {{using_player},{},{},{1}};
-}
-
-}
-
-namespace skills_judges {
-
-bool pass(Game* maingame,int using_player){
-    return true;
-}
-
-}
-
-vector<Skill> game_logic_skills={
-    Skill("跳过", -1, 0, skills_exes::pass, skills_judges::pass, skills_clients::pass)
-};
-
-vector<Skill> basic_card_skills={
-//    Skill("桃",0,0,skills_exes::peach),
-};
 
 void Game::start(){
     random_seed=time(0);
@@ -174,14 +116,7 @@ void Game::start(){
     
     //初始化玩家技能
     for (int i=0; i<players.size(); i++) {
-        //发放游戏逻辑技能
-        for (int j=0; j<game_logic_skills.size(); j++) {
-            players[i].skills.push_back(game_logic_skills[j]);
-        }
-        //发放基本牌技能
-        for (int j=0; j<basic_card_skills.size(); j++) {
-            players[i].skills.push_back(basic_card_skills[j]);
-        }
+        ;
     }
     
     cout<<"Game started."<<endl;
@@ -197,7 +132,7 @@ void Game::start(){
                 break;
             case 2://摸牌阶段
                 for (int m=0; m<2; m++) {
-                    give_card(&card_deck, &players[playing_players[current_player]].cards);
+                    move_card(&card_deck, &players[playing_players[current_player]].cards);
                 }
                 break;
             case 3://出牌阶段
